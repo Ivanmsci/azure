@@ -1,0 +1,4 @@
+.DS_Store
+node_modules
+*.log
+terraform-provider-azurerm_v3.0.0_x5
