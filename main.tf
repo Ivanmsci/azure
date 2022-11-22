@@ -133,4 +133,26 @@ resource "azurerm_linux_virtual_machine" "mtc-vm" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
+
+ #cambios de hoy
+  provisioner "local-exec" {
+      command = templatefile("${var.host_os}-ssh-script.tpl", {
+          hostname = self.public_ip_address,
+          user = "adminuser",
+          identityfile = "~/.ssh/id_rsa.pub"
+      })
+      interpreter = var.host_os == "linux" ? ["bash", "-c"] : ["powershell" , "-command"] 
+  }
+
+  
 }
+
+data "azurerm_public_ip" "mtc-ip-data" {
+    name = azurerm_public_ip.mtc-ip.name
+    resource_group_name = azurerm_resource_group.mtc-rg.name
+}
+
+output "public_ip_address" {
+    value = "${azurerm_linux_virtual_machine.mtc-vm.name}: ${data.azurerm_public_ip.mtc-ip-data.ip_address}"
+}   
+  
