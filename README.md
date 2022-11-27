@@ -1,3 +1,3 @@
 # azure
 
-Este repo es solamente para hacer pruebas de Azure
+Este repo es solamente para hacer pruebas de Azure :)
