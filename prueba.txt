@@ -1,5 +1,0 @@
- 
-A la hora de llevar a cabo la adición de variables, la principal condición es colocar un valor que 
-
-	
-
