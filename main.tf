@@ -61,7 +61,7 @@ resource "azurerm_network_security_rule" "mtc-dev-rule" {
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_range      = "*"
-  source_address_prefix       = "189.163.144.137/32"
+  source_address_prefix       = "189.163.91.174/32"
   destination_address_prefix  = "*"
   network_security_group_name = azurerm_network_security_group.mtc-sg.name
   resource_group_name         = azurerm_resource_group.mtc-rg.name
