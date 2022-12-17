@@ -134,8 +134,7 @@ resource "azurerm_linux_virtual_machine" "mtc-vm" {
     version   = "latest"
   }
 
- #cambios de hoy
-  #provisioner "local-exec" {
+   #provisioner "local-exec" {
    
    #   command = templatefile("${var.host_os}-ssh-script.tpl", {
     #      hostname = self.public_ip_address,
