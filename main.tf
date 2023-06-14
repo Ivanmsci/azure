@@ -61,7 +61,7 @@ resource "azurerm_network_security_rule" "mtc-dev-rule" {
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_range      = "*"
-  source_address_prefix       = "189.163.91.174/32"
+  source_address_prefix       = "189.163.35.49/32"
   destination_address_prefix  = "*"
   network_security_group_name = azurerm_network_security_group.mtc-sg.name
   resource_group_name         = azurerm_resource_group.mtc-rg.name
@@ -80,23 +80,23 @@ resource "azurerm_public_ip" "mtc-ip" {
 
   tags = {
 
-  environment = "dev"
-}
+    environment = "dev"
+  }
 
 }
 
 resource "azurerm_network_interface" "mtc-nic" {
   name                = "mtc-nic"
-  location            = azurerm_resource_group.mtc-rg.location 
+  location            = azurerm_resource_group.mtc-rg.location
   resource_group_name = azurerm_resource_group.mtc-rg.name
 
   ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.mtc_subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = azurerm_public_ip.mtc-ip.id
+    public_ip_address_id          = azurerm_public_ip.mtc-ip.id
 
- 
+
   }
 
   tags = {
@@ -106,15 +106,15 @@ resource "azurerm_network_interface" "mtc-nic" {
 
 
 resource "azurerm_linux_virtual_machine" "mtc-vm" {
-  name                = "mtc-vm"
-  resource_group_name = azurerm_resource_group.mtc-rg.name
-  location            = azurerm_resource_group.mtc-rg.location
-  size                = "Standard_B1s"
-  admin_username      = "adminuser"
+  name                  = "mtc-vm"
+  resource_group_name   = azurerm_resource_group.mtc-rg.name
+  location              = azurerm_resource_group.mtc-rg.location
+  size                  = "Standard_B1s"
+  admin_username        = "adminuser"
   network_interface_ids = [azurerm_network_interface.mtc-nic.id]
 
 
-  custom_data = filebase64 ("customdata.tpl")
+  custom_data = filebase64("customdata.tpl")
 
   admin_ssh_key {
     username   = "adminuser"
@@ -134,25 +134,25 @@ resource "azurerm_linux_virtual_machine" "mtc-vm" {
     version   = "latest"
   }
 
-   #provisioner "local-exec" {
-   
-   #   command = templatefile("${var.host_os}-ssh-script.tpl", {
-    #      hostname = self.public_ip_address,
-     #     user = "adminuser",
-      #    identityfile = "~/.ssh/id_rsa.pub"
-      #})
-      #interpreter = var.host_os == "linux" ? ["bash", "-c"] : ["powershell" , "-command"] 
-  #}
+  provisioner "local-exec" {
 
-  
+    command = templatefile("${var.host_os}-ssh-script.tpl", {
+      hostname     = self.public_ip_address,
+      user         = "adminuser",
+      identityfile = "~/.ssh/id_rsa.pub"
+    })
+    interpreter = var.host_os == "linux" ? ["bash", "-c"] : ["powershell", "-command"]
+  }
+
+
 }
 
 data "azurerm_public_ip" "mtc-ip-data" {
-    name = azurerm_public_ip.mtc-ip.name
-    resource_group_name = azurerm_resource_group.mtc-rg.name
+  name                = azurerm_public_ip.mtc-ip.name
+  resource_group_name = azurerm_resource_group.mtc-rg.name
 }
 
 output "public_ip_address" {
-    value = "${azurerm_linux_virtual_machine.mtc-vm.name}: ${data.azurerm_public_ip.mtc-ip-data.ip_address}"
-}   
-  
+  value = "${azurerm_linux_virtual_machine.mtc-vm.name}: ${data.azurerm_public_ip.mtc-ip-data.ip_address}"
+}
+
